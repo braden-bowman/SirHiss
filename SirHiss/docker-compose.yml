@@ -5,9 +5,9 @@ services:
     image: postgres:15-alpine
     container_name: sirhiss-db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-sirhiss}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sirhiss_secure_pwd}
-      POSTGRES_DB: ${POSTGRES_DB:-sirhiss_db}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -16,7 +16,7 @@ services:
     networks:
       - sirhiss-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sirhiss}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -40,9 +40,10 @@ services:
       dockerfile: Dockerfile
     container_name: sirhiss-backend
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-sirhiss}:${POSTGRES_PASSWORD:-sirhiss_secure_pwd}@postgres:5432/${POSTGRES_DB:-sirhiss_db}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
-      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-in-production}
+      SECRET_KEY: ${SECRET_KEY}
+      ENCRYPTION_SALT: ${ENCRYPTION_SALT}
       ROBINHOOD_USERNAME: ${ROBINHOOD_USERNAME}
       ROBINHOOD_PASSWORD: ${ROBINHOOD_PASSWORD}
       ENVIRONMENT: ${ENVIRONMENT:-development}
@@ -66,9 +67,10 @@ services:
       dockerfile: Dockerfile
     container_name: sirhiss-celery
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-sirhiss}:${POSTGRES_PASSWORD:-sirhiss_secure_pwd}@postgres:5432/${POSTGRES_DB:-sirhiss_db}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
-      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-in-production}
+      SECRET_KEY: ${SECRET_KEY}
+      ENCRYPTION_SALT: ${ENCRYPTION_SALT}
       ROBINHOOD_USERNAME: ${ROBINHOOD_USERNAME}
       ROBINHOOD_PASSWORD: ${ROBINHOOD_PASSWORD}
     volumes:
