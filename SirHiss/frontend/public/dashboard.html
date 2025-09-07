@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>🐍 SirHiss Trading Dashboard</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 240px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-title {
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .user-info {
+            padding: 1rem;
+            background: #2a2a2a;
+            margin: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .user-info .label {
+            color: #aaa;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-info .username {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        .nav-menu {
+            flex: 1;
+            padding: 1rem;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-item.active {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid #00ff88;
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        .nav-icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .logout-section {
+            padding: 1rem;
+            border-top: 1px solid #333;
+        }
+        
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .stat-title {
+            color: #ccc;
+            font-size: 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-change {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .positive {
+            color: #00ff88;
+        }
+        
+        .negative {
+            color: #ff6b6b;
+        }
+        
+        .content-section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            border: 1px solid #333;
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        
+        .section-content {
+            padding: 1.5rem;
+        }
+        
+        .bot-list {
+            list-style: none;
+        }
+        
+        .bot-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        
+        .bot-item:last-child {
+            border-bottom: none;
+        }
+        
+        .bot-info h4 {
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+        
+        .bot-info p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .bot-status {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-running { background: #00ff88; }
+        .status-stopped { background: #666; }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #00ff88;
+            color: #000;
+        }
+        
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+        
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .alert.info {
+            background: rgba(68, 136, 255, 0.1);
+            border: 1px solid rgba(68, 136, 255, 0.3);
+            color: #4488ff;
+        }
+        
+        .welcome-message {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .welcome-message h3 {
+            color: #00ff88;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">🐍 SirHiss</div>
+        </div>
+        
+        <div class="user-info">
+            <div class="label">Logged in as</div>
+            <div class="username" id="username-display">Loading...</div>
+        </div>
+
+        <div class="nav-menu">
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <span class="nav-icon">📊</span>
+                Dashboard
+            </div>
+            <div class="nav-item" onclick="showSection('portfolio')">
+                <span class="nav-icon">💼</span>
+                Portfolio
+            </div>
+            <div class="nav-item" onclick="showSection('market')">
+                <span class="nav-icon">📈</span>
+                Market Data
+            </div>
+            <div class="nav-item" onclick="showSection('bots')">
+                <span class="nav-icon">🤖</span>
+                Trading Bots
+            </div>
+            <div class="nav-item" onclick="showSection('settings')">
+                <span class="nav-icon">⚙️</span>
+                Settings
+            </div>
+            <div class="nav-item" onclick="showSection('security')">
+                <span class="nav-icon">🔒</span>
+                Security
+            </div>
+        </div>
+
+        <div class="logout-section">
+            <button class="logout-btn" onclick="logout()">
+                <span class="nav-icon">🚪</span>
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div id="alert-container"></div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="page-section">
+            <div class="header">
+                <h1 class="page-title">📊 Trading Dashboard</h1>
+            </div>
+
+            <div class="welcome-message">
+                <h3>Welcome to SirHiss Trading Platform!</h3>
+                <p>This is a functional demo of the trading platform. The React application is being compiled in the background. You can explore the different sections using the sidebar navigation.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-icon">💰</span>
+                        <span class="stat-title">Portfolio Value</span>
+                    </div>
+                    <div class="stat-value positive" id="portfolio-value">$15,750.25</div>
+                    <div class="stat-change positive">
+                        <span>📈 +2.35%</span>
+                        <span style="margin-left: 0.5rem;">+$371.25 today</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-icon">💵</span>
+                        <span class="stat-title">Available Cash</span>
+                    </div>
+                    <div class="stat-value">$2,250.75</div>
+                    <div class="stat-change" style="color: #aaa;">
+                        <span>Ready to deploy</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-icon">🤖</span>
+                        <span class="stat-title">Active Bots</span>
+                    </div>
+                    <div class="stat-value">2 / 3</div>
+                    <div class="stat-change positive">
+                        <span>2 running, 1 stopped</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-icon">📊</span>
+                        <span class="stat-title">Holdings</span>
+                    </div>
+                    <div class="stat-value">5</div>
+                    <div class="stat-change" style="color: #aaa;">
+                        <span>Positions active</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Active Trading Bots</h2>
+                </div>
+                <div class="section-content">
+                    <ul class="bot-list" id="bot-list">
+                        <li class="bot-item">
+                            <div class="bot-info">
+                                <h4>Tech Growth Bot</h4>
+                                <p>Focuses on technology growth stocks • 40% allocation • $6,450.20 value</p>
+                            </div>
+                            <div class="bot-status">
+                                <span class="status-indicator status-running"></span>
+                                <span>Running</span>
+                                <button class="btn btn-secondary">Configure</button>
+                            </div>
+                        </li>
+                        <li class="bot-item">
+                            <div class="bot-info">
+                                <h4>Dividend Hunter</h4>
+                                <p>High dividend yield stocks • 30% allocation • $4,680.50 value</p>
+                            </div>
+                            <div class="bot-status">
+                                <span class="status-indicator status-running"></span>
+                                <span>Running</span>
+                                <button class="btn btn-secondary">Configure</button>
+                            </div>
+                        </li>
+                        <li class="bot-item">
+                            <div class="bot-info">
+                                <h4>Crypto Swing</h4>
+                                <p>Cryptocurrency swing trading • 20% allocation • $2,369.55 value</p>
+                            </div>
+                            <div class="bot-status">
+                                <span class="status-indicator status-stopped"></span>
+                                <span>Stopped</span>
+                                <button class="btn btn-primary">Start Bot</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other sections (hidden by default) -->
+        <div id="portfolio-section" class="page-section" style="display: none;">
+            <div class="header">
+                <h1 class="page-title">💼 Portfolio Overview</h1>
+            </div>
+            <div class="content-section">
+                <div class="section-content">
+                    <p>Portfolio management features will be available here. This includes holdings tracking, performance analytics, and portfolio rebalancing tools.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="market-section" class="page-section" style="display: none;">
+            <div class="header">
+                <h1 class="page-title">📈 Market Data & Analysis</h1>
+            </div>
+            <div class="content-section">
+                <div class="section-content">
+                    <p>Real-time market data, stock search, watchlists, and market analysis tools will be available here. Yahoo Finance integration provides live pricing data.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="bots-section" class="page-section" style="display: none;">
+            <div class="header">
+                <h1 class="page-title">🤖 Trading Bot Management</h1>
+            </div>
+            <div class="content-section">
+                <div class="section-content">
+                    <p>Create, configure, and manage your trading bots here. Set custom strategies, risk parameters, and allocation percentages.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-section" class="page-section" style="display: none;">
+            <div class="header">
+                <h1 class="page-title">⚙️ Settings & API Configuration</h1>
+            </div>
+            <div class="content-section">
+                <div class="section-content">
+                    <p>Configure your API credentials for trading platforms (Robinhood, Yahoo Finance, Alpha Vantage, etc.) and manage application settings.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="security-section" class="page-section" style="display: none;">
+            <div class="header">
+                <h1 class="page-title">🔒 Security Settings</h1>
+            </div>
+            <div class="content-section">
+                <div class="section-content">
+                    <p>Manage your account security with two-factor authentication, password changes, and active session monitoring.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = 'http://localhost:9002';
+        
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (!token || !user) {
+                window.location.href = '/app.html';
+                return;
+            }
+            
+            try {
+                const userData = JSON.parse(user);
+                document.getElementById('username-display').textContent = userData.username || 'User';
+            } catch (error) {
+                document.getElementById('username-display').textContent = 'User';
+            }
+        }
+        
+        // Show alert
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+        
+        // Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => section.style.display = 'none');
+            
+            // Remove active class from nav items
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            // Show selected section
+            const targetSection = document.getElementById(`${sectionName}-section`);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+            
+            // Add active class to clicked nav item
+            event.currentTarget.classList.add('active');
+            
+            // Show info about React app status
+            if (sectionName !== 'dashboard') {
+                showAlert(`${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)} section selected. Full React application features will be available once compilation completes.`);
+            }
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            showAlert('Logged out successfully. Redirecting...', 'info');
+            setTimeout(() => {
+                window.location.href = '/app.html';
+            }, 1500);
+        }
+        
+        // Check React app status
+        async function checkReactStatus() {
+            try {
+                const response = await fetch('/');
+                const text = await response.text();
+                
+                if (text.includes('webpack compiled with 1 error')) {
+                    showAlert('React application is compiling... Using static demo interface.', 'info');
+                } else if (text.includes('Compiled successfully')) {
+                    showAlert('React application compiled successfully! You can now refresh to use the full interface.', 'info');
+                }
+            } catch (error) {
+                console.log('Could not check React status:', error);
+            }
+        }
+        
+        // API Helper functions
+        async function makeRequest(endpoint, options = {}) {
+            const token = localStorage.getItem('token');
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
+                ...options
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, defaultOptions);
+                
+                if (response.status === 401) {
+                    // Token expired, redirect to login
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '/app.html';
+                    return null;
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error(`API request failed for ${endpoint}:`, error);
+                return null;
+            }
+        }
+        
+        // Load real-time portfolio data
+        async function loadPortfolioData() {
+            const data = await makeRequest('/api/v1/portfolio/summary');
+            if (!data) return;
+            
+            // Update portfolio value
+            const portfolioValue = document.getElementById('portfolio-value');
+            if (portfolioValue && data.total_value) {
+                portfolioValue.textContent = `$${parseFloat(data.total_value).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}`;
+                
+                // Update change indicator
+                const pnlPercent = data.total_pnl_percent || 0;
+                const changeElement = portfolioValue.nextElementSibling;
+                if (changeElement) {
+                    const isPositive = pnlPercent >= 0;
+                    changeElement.className = `stat-change ${isPositive ? 'positive' : 'negative'}`;
+                    changeElement.innerHTML = `
+                        <span>${isPositive ? '📈' : '📉'} ${pnlPercent >= 0 ? '+' : ''}${pnlPercent.toFixed(2)}%</span>
+                        <span style="margin-left: 0.5rem;">${isPositive ? '+' : ''}$${parseFloat(data.total_pnl || 0).toFixed(2)} total</span>
+                    `;
+                }
+            }
+            
+            // Update available cash
+            const availableCash = document.querySelector('.stat-card:nth-child(2) .stat-value');
+            if (availableCash && data.available_cash) {
+                availableCash.textContent = `$${parseFloat(data.available_cash).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}`;
+            }
+            
+            // Update active bots count
+            const activeBots = document.querySelector('.stat-card:nth-child(3) .stat-value');
+            if (activeBots && typeof data.active_bots !== 'undefined') {
+                activeBots.textContent = `${data.active_bots} / ${data.number_of_bots}`;
+                const botStatus = activeBots.nextElementSibling;
+                if (botStatus) {
+                    botStatus.innerHTML = `<span>${data.active_bots} running, ${data.number_of_bots - data.active_bots} stopped</span>`;
+                }
+            }
+        }
+        
+        // Load trading bots data
+        async function loadBotsData() {
+            const botsData = await makeRequest('/api/v1/bots/');
+            const performanceData = await makeRequest('/api/v1/portfolio/bot-performance');
+            
+            if (!botsData && !performanceData) return;
+            
+            const botList = document.getElementById('bot-list');
+            if (!botList) return;
+            
+            // Combine bots data with performance data
+            const bots = botsData || [];
+            const performance = performanceData || [];
+            
+            const performanceMap = {};
+            performance.forEach(perf => {
+                performanceMap[perf.bot_id] = perf;
+            });
+            
+            botList.innerHTML = '';
+            
+            bots.forEach(bot => {
+                const perf = performanceMap[bot.id] || {};
+                const isRunning = bot.status === 'running';
+                
+                const botItem = document.createElement('li');
+                botItem.className = 'bot-item';
+                botItem.innerHTML = `
+                    <div class="bot-info">
+                        <h4>${bot.name}</h4>
+                        <p>${bot.description || 'Trading bot'} • ${parseFloat(bot.allocated_percentage || 0).toFixed(1)}% allocation • $${parseFloat(perf.current_value || bot.allocated_amount || 0).toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })} value</p>
+                    </div>
+                    <div class="bot-status">
+                        <span class="status-indicator ${isRunning ? 'status-running' : 'status-stopped'}"></span>
+                        <span>${isRunning ? 'Running' : 'Stopped'}</span>
+                        <button class="btn btn-secondary" onclick="configureBot(${bot.id})">Configure</button>
+                        <button class="btn ${isRunning ? 'btn-secondary' : 'btn-primary'}" onclick="${isRunning ? 'stopBot' : 'startBot'}(${bot.id})">
+                            ${isRunning ? 'Stop Bot' : 'Start Bot'}
+                        </button>
+                    </div>
+                `;
+                botList.appendChild(botItem);
+            });
+            
+            // Update holdings count from bots data
+            const holdingsCount = document.querySelector('.stat-card:nth-child(4) .stat-value');
+            if (holdingsCount) {
+                const totalPositions = performance.reduce((sum, perf) => sum + (perf.active_positions || 0), 0);
+                holdingsCount.textContent = totalPositions.toString();
+                const holdingsStatus = holdingsCount.nextElementSibling;
+                if (holdingsStatus) {
+                    holdingsStatus.innerHTML = `<span>Positions active</span>`;
+                }
+            }
+        }
+        
+        // Load market data for dashboard
+        async function loadMarketData() {
+            // This could load trending stocks, market alerts, etc.
+            try {
+                const alerts = await makeRequest('/api/v1/market-data/alerts?limit=3');
+                if (alerts && alerts.length > 0) {
+                    // Show recent market alerts
+                    alerts.forEach(alert => {
+                        if (alert.severity === 'high' || alert.severity === 'critical') {
+                            showAlert(`Market Alert: ${alert.message}`, 'info');
+                        }
+                    });
+                }
+            } catch (error) {
+                console.log('Could not load market alerts:', error);
+            }
+        }
+        
+        // Bot control functions
+        async function startBot(botId) {
+            showAlert(`Starting bot ${botId}...`, 'info');
+            const result = await makeRequest(`/api/v1/bots/${botId}/start`, { method: 'POST' });
+            
+            if (result) {
+                showAlert(result.message || 'Bot started successfully', 'info');
+                await loadBotsData(); // Refresh bot list
+                await loadPortfolioData(); // Refresh portfolio stats
+            } else {
+                showAlert('Failed to start bot', 'info');
+            }
+        }
+        
+        async function stopBot(botId) {
+            showAlert(`Stopping bot ${botId}...`, 'info');
+            const result = await makeRequest(`/api/v1/bots/${botId}/stop`, { method: 'POST' });
+            
+            if (result) {
+                showAlert(result.message || 'Bot stopped successfully', 'info');
+                await loadBotsData(); // Refresh bot list
+                await loadPortfolioData(); // Refresh portfolio stats
+            } else {
+                showAlert('Failed to stop bot', 'info');
+            }
+        }
+        
+        function configureBot(botId) {
+            showAlert(`Bot configuration for bot ${botId} - Full interface available in React app`, 'info');
+        }
+        
+        // Enhanced section display with data loading
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => section.style.display = 'none');
+            
+            // Remove active class from nav items
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            // Show selected section
+            const targetSection = document.getElementById(`${sectionName}-section`);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+            
+            // Add active class to clicked nav item
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+            
+            // Load section-specific data
+            if (sectionName === 'dashboard') {
+                loadDashboardData();
+            } else if (sectionName === 'portfolio') {
+                loadPortfolioSection();
+            } else if (sectionName === 'market') {
+                loadMarketSection();
+            } else if (sectionName === 'bots') {
+                loadBotsSection();
+            } else {
+                // Show info about React app status
+                showAlert(`${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)} section selected. Full React application features will be available once compilation completes.`);
+            }
+        }
+        
+        // Load data for each section
+        async function loadDashboardData() {
+            await Promise.all([
+                loadPortfolioData(),
+                loadBotsData(),
+                loadMarketData()
+            ]);
+        }
+        
+        async function loadPortfolioSection() {
+            showAlert('Loading portfolio data...', 'info');
+            const positions = await makeRequest('/api/v1/portfolio/positions');
+            const riskMetrics = await makeRequest('/api/v1/portfolio/risk-metrics');
+            
+            if (positions || riskMetrics) {
+                showAlert('Portfolio data loaded. Full portfolio analytics available in React app.', 'info');
+            }
+        }
+        
+        async function loadMarketSection() {
+            showAlert('Loading market data...', 'info');
+            // Could load watchlist, trending stocks, etc.
+            showAlert('Market data section - Real-time data and charts available in React app.', 'info');
+        }
+        
+        async function loadBotsSection() {
+            showAlert('Loading bot management interface...', 'info');
+            await loadBotsData();
+            showAlert('Bot data loaded. Full bot configuration available in React app.', 'info');
+        }
+        
+        // Auto-refresh data every 30 seconds when on dashboard
+        let refreshInterval;
+        
+        function startAutoRefresh() {
+            // Clear existing interval
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            
+            // Set up new interval for dashboard auto-refresh
+            refreshInterval = setInterval(async () => {
+                const dashboardSection = document.getElementById('dashboard-section');
+                if (dashboardSection && dashboardSection.style.display !== 'none') {
+                    await loadDashboardData();
+                }
+            }, 30000); // 30 seconds
+        }
+        
+        // Initialize
+        checkAuth();
+        checkReactStatus();
+        loadDashboardData();
+        startAutoRefresh();
+        
+        // Show welcome message
+        setTimeout(() => {
+            showAlert('Welcome to SirHiss Trading Platform! Real-time data is now loading from the backend.');
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>🐍 SirHiss Trading Platform</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .main-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #cccccc;
+            margin-bottom: 2rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem auto;
+            padding: 0 1rem;
+        }
+        
+        .feature-card {
+            background: #2a2a2a;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-desc {
+            color: #aaa;
+            line-height: 1.6;
+        }
+        
+        .login-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .login-container {
+            background: #1a1a1a;
+            padding: 3rem;
+            border-radius: 12px;
+            border: 1px solid #00ff8844;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .login-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+        
+        .login-icon {
+            margin-right: 0.5rem;
+            color: #00ff88;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ccc;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-primary {
+            background: #00ff88;
+            color: #000;
+        }
+        
+        .btn-primary:hover {
+            background: #00dd77;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #4488ff;
+            border: 2px solid #4488ff;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(68, 136, 255, 0.1);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #333;
+        }
+        
+        .divider span {
+            margin: 0 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .demo-info {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(68, 136, 255, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(68, 136, 255, 0.3);
+        }
+        
+        .demo-info h4 {
+            color: #4488ff;
+            margin-bottom: 0.5rem;
+        }
+        
+        .demo-info code {
+            font-family: 'Courier New', monospace;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+        }
+        
+        .footer {
+            padding: 2rem;
+            border-top: 1px solid #333;
+            text-align: center;
+            color: #666;
+        }
+        
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .alert.error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+        }
+        
+        .alert.success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-connected { background: #00ff88; }
+        .status-disconnected { background: #ff6b6b; }
+        .status-loading { background: #ffaa00; animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <h1 class="main-title">🐍 SirHiss Trading Platform</h1>
+        <p class="subtitle">Advanced AI-Powered Trading Bot Management</p>
+        
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3 class="feature-title">Automated Trading</h3>
+                <p class="feature-desc">Create and manage multiple trading bots with custom strategies</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3 class="feature-title">Real-Time Data</h3>
+                <p class="feature-desc">Live market data and portfolio tracking with interactive charts</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">Enterprise Security</h3>
+                <p class="feature-desc">Two-factor authentication and encrypted credential storage</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Section -->
+    <div class="login-section">
+        <div class="login-container">
+            <div class="login-title">
+                <span class="login-icon">🔐</span>
+                Login to Dashboard
+            </div>
+
+            <div id="status-alert" class="alert"></div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="login-btn">
+                    Login to Dashboard
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <button class="btn btn-secondary" id="demo-btn">
+                Try Demo Account
+            </button>
+
+            <div class="demo-info">
+                <h4>Demo Credentials</h4>
+                <p>Username: <code>admin</code> | Password: <code>admin123</code></p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <span id="backend-status" class="status-indicator status-loading"></span>
+                    <span id="backend-status-text">Checking backend connection...</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2025 SirHiss Trading Platform - Secure • Automated • Professional</p>
+    </div>
+
+    <script>
+        // Backend API configuration
+        const API_BASE = 'http://localhost:9002/api/v1';
+        
+        // DOM elements
+        const loginForm = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const demoBtn = document.getElementById('demo-btn');
+        const statusAlert = document.getElementById('status-alert');
+        const backendStatus = document.getElementById('backend-status');
+        const backendStatusText = document.getElementById('backend-status-text');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        // Check backend status
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch('http://localhost:9002/health');
+                const data = await response.json();
+                
+                if (data.status === 'healthy') {
+                    backendStatus.className = 'status-indicator status-connected';
+                    backendStatusText.textContent = 'Backend connected';
+                } else {
+                    throw new Error('Backend unhealthy');
+                }
+            } catch (error) {
+                backendStatus.className = 'status-indicator status-disconnected';
+                backendStatusText.textContent = 'Backend disconnected';
+            }
+        }
+
+        // Show alert message
+        function showAlert(message, type) {
+            statusAlert.textContent = message;
+            statusAlert.className = `alert ${type}`;
+            statusAlert.style.display = 'block';
+        }
+
+        // Hide alert message
+        function hideAlert() {
+            statusAlert.style.display = 'none';
+        }
+
+        // Handle login
+        async function handleLogin(username, password) {
+            hideAlert();
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+
+            try {
+                // Try backend authentication first
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Store the token
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    showAlert('Login successful! Redirecting to dashboard...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 2000);
+                    
+                } else if (username === 'admin' && password === 'admin123') {
+                    // Demo mode fallback for development
+                    const demoUser = {
+                        id: 1,
+                        username: 'admin',
+                        email: 'admin@sirhiss.local',
+                        is_active: true
+                    };
+                    
+                    localStorage.setItem('token', 'demo_token_' + Date.now());
+                    localStorage.setItem('user', JSON.stringify(demoUser));
+                    localStorage.setItem('demo_mode', 'true');
+                    
+                    showAlert('Demo login successful! Redirecting to dashboard...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 2000);
+                    
+                } else {
+                    throw new Error('Invalid credentials');
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Login failed. Using demo mode - try admin/admin123.', 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login to Dashboard';
+            }
+        }
+
+        // Handle demo login
+        function handleDemoLogin() {
+            usernameInput.value = 'admin';
+            passwordInput.value = 'admin123';
+            handleLogin('admin', 'admin123');
+        }
+
+        // Event listeners
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            handleLogin(username, password);
+        });
+
+        demoBtn.addEventListener('click', handleDemoLogin);
+
+        // Initialize
+        checkBackendStatus();
+        
+        // Recheck backend status every 30 seconds
+        setInterval(checkBackendStatus, 30000);
+    </script>
+</body>
+</html>

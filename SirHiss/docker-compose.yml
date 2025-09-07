@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: sirhiss-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sirhiss}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sirhiss_secure_pwd}
+      POSTGRES_DB: ${POSTGRES_DB:-sirhiss_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "9003:5432"
+    networks:
+      - sirhiss-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sirhiss}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: sirhiss-redis
+    ports:
+      - "9004:6379"
+    networks:
+      - sirhiss-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sirhiss-backend
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sirhiss}:${POSTGRES_PASSWORD:-sirhiss_secure_pwd}@postgres:5432/${POSTGRES_DB:-sirhiss_db}
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-in-production}
+      ROBINHOOD_USERNAME: ${ROBINHOOD_USERNAME}
+      ROBINHOOD_PASSWORD: ${ROBINHOOD_PASSWORD}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+    volumes:
+      - ./backend:/app
+      - bot_storage:/app/bot_storage
+    ports:
+      - "9002:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sirhiss-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sirhiss-celery
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sirhiss}:${POSTGRES_PASSWORD:-sirhiss_secure_pwd}@postgres:5432/${POSTGRES_DB:-sirhiss_db}
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-in-production}
+      ROBINHOOD_USERNAME: ${ROBINHOOD_USERNAME}
+      ROBINHOOD_PASSWORD: ${ROBINHOOD_PASSWORD}
+    volumes:
+      - ./backend:/app
+      - bot_storage:/app/bot_storage
+    depends_on:
+      - backend
+      - redis
+      - postgres
+    networks:
+      - sirhiss-network
+    command: celery -A app.core.celery_app worker --loglevel=info
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sirhiss-frontend
+    environment:
+      REACT_APP_API_URL: http://localhost:9002
+      REACT_APP_WS_URL: ws://localhost:9002
+      SKIP_PREFLIGHT_CHECK: "true"
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "9001:3000"
+    depends_on:
+      - backend
+    networks:
+      - sirhiss-network
+    command: npm start
+
+volumes:
+  postgres_data:
+  bot_storage:
+
+networks:
+  sirhiss-network:
+    driver: bridge
