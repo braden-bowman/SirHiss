@@ -2,9 +2,21 @@
 
 ## 🔒 Critical Security Configuration
 
-**⚠️ IMPORTANT**: Before running SirHiss, you MUST configure secure credentials.
+**⚠️ IMPORTANT**: Before running SirHiss in production, you MUST configure secure credentials.
 
-## Required Environment Variables
+## Development vs Production
+
+### 🧪 Development Setup (Quick Start)
+For development and testing, SirHiss includes a `.env.dev` file with safe defaults:
+```bash
+# Just run - no additional setup needed for development
+./launch.sh
+```
+
+### 🏭 Production Setup (Secure)
+For production deployment, create a `.env` file with secure credentials.
+
+## Required Environment Variables for Production
 
 Copy `.env.example` to `.env` and configure the following:
 

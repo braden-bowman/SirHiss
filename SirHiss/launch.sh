@@ -32,11 +32,14 @@ else
     DOCKER_COMPOSE="docker-compose"
 fi
 
-# Check if .env file exists, create if not
+# Check environment configuration
 if [ ! -f .env ]; then
-    echo -e "${YELLOW}Creating .env file with default values...${NC}"
-    cp .env.example .env
-    echo -e "${YELLOW}Please edit .env file with your Robinhood credentials before launching${NC}"
+    echo -e "${YELLOW}📋 No .env file found. Using development configuration...${NC}"
+    echo -e "${YELLOW}🔒 For production, create .env file with secure credentials (see SECURITY.md)${NC}"
+    echo ""
+else
+    echo -e "${GREEN}✅ Found .env configuration file${NC}"
+    echo ""
 fi
 
 # Stop any existing containers first
@@ -77,7 +80,7 @@ echo -e "${YELLOW}Waiting for services to be ready...${NC}"
 
 # Wait for database
 echo "Waiting for PostgreSQL..."
-while ! $DOCKER_COMPOSE exec postgres pg_isready -U sirhiss >/dev/null 2>&1; do
+while ! $DOCKER_COMPOSE exec postgres pg_isready >/dev/null 2>&1; do
     sleep 1
 done
 
