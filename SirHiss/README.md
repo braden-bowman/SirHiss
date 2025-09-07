@@ -7,6 +7,10 @@ A dockerized trading bot application that connects to the Robinhood API for auto
 ![Python](https://img.shields.io/badge/Python-3.11-green)
 ![React](https://img.shields.io/badge/React-18-blue)
 
+## 🔒 IMPORTANT SECURITY NOTICE
+
+**⚠️ REQUIRED SETUP**: This application requires secure environment configuration before use. Please read [SECURITY.md](./SECURITY.md) for critical setup instructions.
+
 ## ✨ Features
 
 - **Multi-Bot Architecture**: Create and manage multiple trading bot instances
