@@ -98,5 +98,5 @@ CREATE INDEX IF NOT EXISTS idx_market_data_timestamp ON market_data(timestamp);
 
 -- Create a default admin user (password: admin123 - CHANGE IN PRODUCTION)
 INSERT INTO users (username, email, hashed_password) 
-VALUES ('admin', 'admin@sirhiss.local', '$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW') 
+VALUES ('admin', 'admin@sirhiss.local', '$2b$12$KhUfQmYHIUIeGDX0Fln.AeV2/sjnuEE/msn9abJGCJ/rQvvsHW6tC') 
 ON CONFLICT (username) DO NOTHING;

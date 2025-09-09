@@ -10,9 +10,10 @@ import logging
 
 from app.api.api import api_router
 from app.core.config import settings
-from app.core.database import engine
+from app.core.database import engine, get_db
 from app.models import Base
 from app.core.websocket_manager import manager
+from app.api.endpoints.algorithms import init_algorithm_templates
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -67,6 +68,16 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
 async def startup_event():
     """Application startup tasks"""
     logger.info("SirHiss backend starting up...")
+    
+    # Initialize algorithm templates
+    try:
+        db = next(get_db())
+        await init_algorithm_templates(db)
+        logger.info("Algorithm templates initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize algorithm templates: {e}")
+    finally:
+        db.close()
 
 
 @app.on_event("shutdown")

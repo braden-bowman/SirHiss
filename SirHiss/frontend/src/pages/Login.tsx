@@ -141,11 +141,6 @@ export function Login() {
               </Typography>
             </Box>
 
-            {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
-            )}
 
             <form onSubmit={handleSubmit}>
               <TextField
@@ -245,6 +240,12 @@ export function Login() {
               </Typography>
             </Box>
           </Paper>
+          
+          {error && (
+            <Alert severity="error" sx={{ mt: 3 }}>
+              {error}
+            </Alert>
+          )}
         </Container>
       </Box>
 

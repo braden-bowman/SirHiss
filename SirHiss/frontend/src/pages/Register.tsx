@@ -264,11 +264,6 @@ export function Register() {
             ))}
           </Stepper>
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
 
           {/* Step 1: Account Details */}
           {activeStep === 0 && (
@@ -480,6 +475,12 @@ export function Register() {
             </Button>
           </Box>
         </Paper>
+        
+        {error && (
+          <Alert severity="error" sx={{ mt: 3 }}>
+            {error}
+          </Alert>
+        )}
       </Container>
     </Box>
   );

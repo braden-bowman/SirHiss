@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     ENCRYPTION_SALT: str = "sirhiss_credential_salt"
+    SIRHISS_API_KEY: str = "sirhiss_api_key_change_in_production"
     
     # Robinhood API
     ROBINHOOD_USERNAME: Optional[str] = None

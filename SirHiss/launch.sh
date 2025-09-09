@@ -42,6 +42,11 @@ else
     echo ""
 fi
 
+# Docker cleanup and optimization
+echo -e "${YELLOW}🧹 Performing Docker cleanup to free space...${NC}"
+docker system prune -f --volumes 2>/dev/null || true
+docker builder prune -f 2>/dev/null || true
+
 # Stop any existing containers first
 echo -e "${YELLOW}Stopping any existing SirHiss containers...${NC}"
 $DOCKER_COMPOSE down --remove-orphans 2>/dev/null || true
@@ -50,6 +55,10 @@ $DOCKER_COMPOSE down --remove-orphans 2>/dev/null || true
 echo "Cleaning up any remaining SirHiss containers..."
 docker stop sirhiss-frontend sirhiss-backend sirhiss-celery sirhiss-db sirhiss-redis 2>/dev/null || true
 docker rm sirhiss-frontend sirhiss-backend sirhiss-celery sirhiss-db sirhiss-redis 2>/dev/null || true
+
+# Check for and clean up any dangling SirHiss images
+echo "Removing old SirHiss images..."
+docker images | grep -E "sirhiss|<none>" | awk '{print $3}' | xargs docker rmi -f 2>/dev/null || true
 
 # Function to check if a port is in use (after stopping our containers)
 check_port() {
@@ -68,9 +77,12 @@ check_port 9003  # PostgreSQL
 check_port 9004  # Redis
 echo -e "${GREEN}All ports are available!${NC}"
 
-# Build and start services
-echo -e "${GREEN}Building Docker images...${NC}"
-$DOCKER_COMPOSE build --no-cache
+# Build and start services with optimized caching
+echo -e "${GREEN}Building Docker images with optimized caching...${NC}"
+# Enable BuildKit for better caching and performance
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
+$DOCKER_COMPOSE build --parallel
 
 echo -e "${GREEN}Starting services...${NC}"
 $DOCKER_COMPOSE up -d
@@ -115,7 +127,9 @@ echo -e "Password: ${YELLOW}admin123${NC}"
 echo ""
 echo -e "${YELLOW}💡 To view logs:${NC} $DOCKER_COMPOSE logs -f [service_name]"
 echo -e "${YELLOW}💡 To stop:${NC} $DOCKER_COMPOSE down"
-echo -e "${YELLOW}💡 To rebuild:${NC} $DOCKER_COMPOSE build --no-cache"
+echo -e "${YELLOW}💡 To rebuild:${NC} $DOCKER_COMPOSE build --parallel"
+echo -e "${YELLOW}💡 To clean Docker:${NC} ./scripts/docker-cleanup.sh"
+echo -e "${YELLOW}💡 For production:${NC} $DOCKER_COMPOSE -f docker-compose.yml -f docker-compose.prod.yml up -d"
 echo ""
 
 # Automatically open browser if on macOS or Linux with GUI

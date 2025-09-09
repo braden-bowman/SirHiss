@@ -33,3 +33,4 @@ class TradingBot(Base):
     portfolio = relationship("Portfolio", back_populates="trading_bots")
     executions = relationship("BotExecution", back_populates="bot", cascade="all, delete-orphan")
     holdings = relationship("Holding", back_populates="bot", cascade="all, delete-orphan")
+    algorithm_configs = relationship("AlgorithmConfig", back_populates="bot", cascade="all, delete-orphan")

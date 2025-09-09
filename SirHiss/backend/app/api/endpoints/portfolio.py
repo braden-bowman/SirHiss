@@ -168,10 +168,12 @@ async def get_portfolio_summary(
         total_allocated = sum(bot.allocated_amount or Decimal('0') for bot in bots)
         active_bots = sum(1 for bot in bots if bot.status == "running")
         
-        # Calculate total P&L from bots
-        total_unrealized_pnl = sum(bot.unrealized_pnl or Decimal('0') for bot in bots)
-        total_realized_pnl = sum(bot.realized_pnl or Decimal('0') for bot in bots)
-        total_pnl = total_unrealized_pnl + total_realized_pnl
+        # Calculate total P&L from bots (using current_value vs allocated_amount)
+        total_pnl = Decimal('0')
+        for bot in bots:
+            if bot.current_value and bot.allocated_amount:
+                bot_pnl = bot.current_value - bot.allocated_amount
+                total_pnl += bot_pnl
         
         # Calculate current portfolio value
         current_value = portfolio.total_value + total_pnl
@@ -249,7 +251,9 @@ async def get_bot_performance(
         
         for bot in bots:
             # Get bot statistics
-            total_pnl = (bot.unrealized_pnl or Decimal('0')) + (bot.realized_pnl or Decimal('0'))
+            total_pnl = Decimal('0')
+            if bot.current_value and bot.allocated_amount:
+                total_pnl = bot.current_value - bot.allocated_amount
             pnl_percent = float(total_pnl / bot.allocated_amount * 100) if bot.allocated_amount > 0 else 0.0
             
             # Get active positions count
@@ -270,8 +274,8 @@ async def get_bot_performance(
                 allocated_percentage=bot.allocated_percentage,
                 allocated_amount=bot.allocated_amount,
                 current_value=bot.current_value or bot.allocated_amount,
-                unrealized_pnl=bot.unrealized_pnl or Decimal('0'),
-                realized_pnl=bot.realized_pnl or Decimal('0'),
+                unrealized_pnl=total_pnl,
+                realized_pnl=Decimal('0'),
                 total_pnl=total_pnl,
                 pnl_percent=pnl_percent,
                 status=bot.status,

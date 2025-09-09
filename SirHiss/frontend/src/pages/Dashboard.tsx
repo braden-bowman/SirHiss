@@ -155,12 +155,6 @@ export function Dashboard() {
 
   return (
     <Box>
-      {error && (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
         <SmartToy sx={{ mr: 1, fontSize: 32 }} />
         <Typography variant="h4">
@@ -451,6 +445,12 @@ export function Dashboard() {
           </Paper>
         </Grid>
       </Grid>
+      
+      {error && (
+        <Alert severity="warning" sx={{ mt: 3 }}>
+          {error}
+        </Alert>
+      )}
     </Box>
   );
 }

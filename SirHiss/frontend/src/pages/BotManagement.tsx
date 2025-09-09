@@ -47,7 +47,8 @@ import {
   MonetizationOn,
   Speed,
 } from '@mui/icons-material';
-import { TradingBot, botApi } from '../services/api';
+import { TradingBot, botApi } from '../services/api.ts';
+import { AlgorithmManager } from '../components/AlgorithmManager.tsx';
 
 export function BotManagement() {
   const [bots, setBots] = useState<TradingBot[]>([]);
@@ -56,6 +57,8 @@ export function BotManagement() {
   const [editBot, setEditBot] = useState<TradingBot | null>(null);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState(0);
+  const [selectedBot, setSelectedBot] = useState<TradingBot | null>(null);
+  const [algorithmDialogOpen, setAlgorithmDialogOpen] = useState(false);
 
   const [newBot, setNewBot] = useState({
     name: '',
@@ -279,11 +282,6 @@ def should_sell(symbol, position, price_data, indicators):
         </Typography>
       </Box>
 
-      {error && (
-        <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setError('')}>
-          {error}
-        </Alert>
-      )}
 
       {/* Bot Stats */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -344,6 +342,7 @@ def should_sell(symbol, position, price_data, indicators):
       <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)} sx={{ mb: 3 }}>
         <Tab label="My Bots" />
         <Tab label="Strategy Templates" />
+        <Tab label="Algorithm Manager" />
       </Tabs>
 
       <TabPanel value={activeTab} index={0}>
@@ -485,6 +484,17 @@ def should_sell(symbol, position, price_data, indicators):
                       <Settings />
                     </IconButton>
                     <IconButton
+                      onClick={() => {
+                        setSelectedBot(bot);
+                        setAlgorithmDialogOpen(true);
+                      }}
+                      title="Manage Algorithms"
+                      size="small"
+                      sx={{ color: '#00ff88' }}
+                    >
+                      <Code />
+                    </IconButton>
+                    <IconButton
                       color="error"
                       onClick={() => handleDeleteBot(bot.id)}
                       title="Delete Bot"
@@ -558,6 +568,102 @@ def should_sell(symbol, position, price_data, indicators):
           ))}
         </Grid>
       </TabPanel>
+
+      <TabPanel value={activeTab} index={2}>
+        <Typography variant="h5" gutterBottom>
+          Algorithm Manager
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+          Configure advanced trading algorithms for your bots. Select a bot to manage its algorithms.
+        </Typography>
+        
+        {selectedBot ? (
+          <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <SmartToy sx={{ color: '#00ff88' }} />
+              <Typography variant="h6">
+                Managing algorithms for: {selectedBot.name}
+              </Typography>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => setSelectedBot(null)}
+              >
+                Select Different Bot
+              </Button>
+            </Box>
+            <AlgorithmManager 
+              botId={selectedBot.id} 
+              onAlgorithmsChange={() => fetchBots()}
+            />
+          </Box>
+        ) : (
+          <Box>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Select a bot to manage its algorithms:
+            </Typography>
+            <Grid container spacing={2}>
+              {bots.map((bot) => (
+                <Grid item xs={12} md={6} lg={4} key={bot.id}>
+                  <Card 
+                    sx={{ 
+                      cursor: 'pointer',
+                      transition: 'all 0.3s',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: 4
+                      }
+                    }}
+                    onClick={() => setSelectedBot(bot)}
+                  >
+                    <CardContent>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <SmartToy sx={{ color: bot.status === 'running' ? '#00ff88' : '#666' }} />
+                        <Box>
+                          <Typography variant="h6">
+                            {bot.name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {bot.status} • {bot.allocated_percentage}% allocated
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
+      </TabPanel>
+
+      {/* Algorithm Management Dialog */}
+      <Dialog 
+        open={algorithmDialogOpen} 
+        onClose={() => setAlgorithmDialogOpen(false)} 
+        maxWidth="lg" 
+        fullWidth
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Code sx={{ mr: 1, color: '#00ff88' }} />
+            Algorithm Manager - {selectedBot?.name}
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          {selectedBot && (
+            <AlgorithmManager 
+              botId={selectedBot.id} 
+              onAlgorithmsChange={() => fetchBots()}
+            />
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAlgorithmDialogOpen(false)}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Create Bot Dialog */}
       <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)} maxWidth="lg" fullWidth>
@@ -652,6 +758,12 @@ def should_sell(symbol, position, price_data, indicators):
           </Button>
         </DialogActions>
       </Dialog>
+      
+      {error && (
+        <Alert severity="warning" sx={{ mt: 3 }} onClose={() => setError('')}>
+          {error}
+        </Alert>
+      )}
     </Box>
   );
 }

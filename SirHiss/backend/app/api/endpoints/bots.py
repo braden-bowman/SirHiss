@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from decimal import Decimal
+from datetime import datetime
 
 from app.core.database import get_db
 from app.core.security import get_current_user
@@ -51,8 +52,8 @@ class BotResponse(BaseModel):
     current_value: Decimal
     status: str
     parameters: dict
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True

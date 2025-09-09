@@ -90,16 +90,55 @@
             width: 100%;
         }
         
-        .login-title {
+        .tab-nav {
+            display: flex;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            background: #2a2a2a;
+            color: #ccc;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn:hover {
+            background: #333;
+            color: #fff;
+        }
+        
+        .tab-btn.active {
+            background: #00ff88;
+            color: #000;
+            font-weight: bold;
+        }
+        
+        .form-container {
+            display: none;
+        }
+        
+        .form-container.active {
+            display: block;
+        }
+        
+        .form-title {
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 2rem;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: #fff;
         }
         
-        .login-icon {
+        .form-icon {
             margin-right: 0.5rem;
             color: #00ff88;
         }
@@ -183,25 +222,100 @@
             font-size: 0.9rem;
         }
         
-        .demo-info {
+        .input-help {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.3rem;
+        }
+        
+        .password-strength {
+            height: 4px;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            background: #333;
+            transition: all 0.3s;
+        }
+        
+        .password-strength.weak {
+            background: #ff6b6b;
+            width: 25%;
+        }
+        
+        .password-strength.medium {
+            background: #ffaa00;
+            width: 50%;
+        }
+        
+        .password-strength.strong {
+            background: #00ff88;
+            width: 75%;
+        }
+        
+        .password-strength.very-strong {
+            background: #00ff88;
+            width: 100%;
+        }
+        
+        .password-match {
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
+        
+        .password-match.match {
+            color: #00ff88;
+        }
+        
+        .password-match.no-match {
+            color: #ff6b6b;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.4;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            display: none;
+        }
+        
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #555;
+            border-radius: 3px;
+            margin-right: 0.8rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .checkbox-label input[type="checkbox"]:checked + .checkbox-custom {
+            background: #00ff88;
+            border-color: #00ff88;
+        }
+        
+        .checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after {
+            content: '✓';
+            position: absolute;
+            top: -2px;
+            left: 2px;
+            color: #000;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .status-info {
             text-align: center;
             margin-top: 1rem;
             padding: 1rem;
-            background: rgba(68, 136, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 6px;
-            border: 1px solid rgba(68, 136, 255, 0.3);
-        }
-        
-        .demo-info h4 {
-            color: #4488ff;
-            margin-bottom: 0.5rem;
-        }
-        
-        .demo-info code {
-            font-family: 'Courier New', monospace;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
+            border: 1px solid #333;
         }
         
         .footer {
@@ -273,43 +387,95 @@
         </div>
     </div>
 
-    <!-- Login Section -->
+    <!-- Authentication Section -->
     <div class="login-section">
         <div class="login-container">
-            <div class="login-title">
-                <span class="login-icon">🔐</span>
-                Login to Dashboard
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <button class="tab-btn active" id="login-tab">Sign In</button>
+                <button class="tab-btn" id="register-tab">Create Account</button>
             </div>
 
             <div id="status-alert" class="alert"></div>
 
-            <form id="login-form">
-                <div class="form-group">
-                    <label class="form-label" for="username">Username</label>
-                    <input type="text" id="username" name="username" class="form-input" required>
+            <!-- Login Form -->
+            <div id="login-form-container" class="form-container active">
+                <div class="form-title">
+                    <span class="form-icon">🔐</span>
+                    Welcome Back
                 </div>
                 
-                <div class="form-group">
-                    <label class="form-label" for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-input" required>
-                </div>
-                
-                <button type="submit" class="btn btn-primary" id="login-btn">
-                    Login to Dashboard
-                </button>
-            </form>
-
-            <div class="divider">
-                <span>or</span>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="login-username">Username</label>
+                        <input type="text" id="login-username" name="username" class="form-input" required autocomplete="username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="login-password">Password</label>
+                        <input type="password" id="login-password" name="password" class="form-input" required autocomplete="current-password">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="login-btn">
+                        Sign In to Dashboard
+                    </button>
+                </form>
             </div>
 
-            <button class="btn btn-secondary" id="demo-btn">
-                Try Demo Account
-            </button>
+            <!-- Registration Form -->
+            <div id="register-form-container" class="form-container">
+                <div class="form-title">
+                    <span class="form-icon">🚀</span>
+                    Create Your Account
+                </div>
+                
+                <form id="register-form">
+                    <div class="form-group">
+                        <label class="form-label" for="register-username">Username</label>
+                        <input type="text" id="register-username" name="username" class="form-input" required 
+                               minlength="3" maxlength="50" pattern="^[a-zA-Z0-9_]{3,50}$" 
+                               title="Username must be 3-50 characters, letters, numbers, and underscores only"
+                               autocomplete="username">
+                        <div class="input-help">3-50 characters, letters, numbers, and underscores only</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="register-email">Email Address</label>
+                        <input type="email" id="register-email" name="email" class="form-input" required 
+                               maxlength="100" autocomplete="email">
+                        <div class="input-help">Used for account recovery and security notifications</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="register-password">Password</label>
+                        <input type="password" id="register-password" name="password" class="form-input" required 
+                               minlength="8" maxlength="128" autocomplete="new-password">
+                        <div class="password-strength" id="password-strength"></div>
+                        <div class="input-help">Minimum 8 characters with uppercase, lowercase, number, and special character</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="register-confirm-password">Confirm Password</label>
+                        <input type="password" id="register-confirm-password" name="confirmPassword" class="form-input" required 
+                               minlength="8" maxlength="128" autocomplete="new-password">
+                        <div class="password-match" id="password-match"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms-checkbox" required>
+                            <span class="checkbox-custom"></span>
+                            I agree to the Terms of Service and Privacy Policy
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="register-btn">
+                        Create Account
+                    </button>
+                </form>
+            </div>
 
-            <div class="demo-info">
-                <h4>Demo Credentials</h4>
-                <p>Username: <code>admin</code> | Password: <code>admin123</code></p>
+            <div class="status-info">
                 <p style="margin-top: 0.5rem; font-size: 0.9rem;">
                     <span id="backend-status" class="status-indicator status-loading"></span>
                     <span id="backend-status-text">Checking backend connection...</span>
@@ -324,57 +490,229 @@
     </div>
 
     <script>
+        /**
+         * SirHiss Trading Platform Authentication System
+         * Production-level user registration and login functionality
+         */
+
         // Backend API configuration
         const API_BASE = 'http://localhost:9002/api/v1';
         
         // DOM elements
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+        const loginFormContainer = document.getElementById('login-form-container');
+        const registerFormContainer = document.getElementById('register-form-container');
         const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
         const loginBtn = document.getElementById('login-btn');
-        const demoBtn = document.getElementById('demo-btn');
+        const registerBtn = document.getElementById('register-btn');
         const statusAlert = document.getElementById('status-alert');
         const backendStatus = document.getElementById('backend-status');
         const backendStatusText = document.getElementById('backend-status-text');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
 
-        // Check backend status
-        async function checkBackendStatus() {
-            try {
-                const response = await fetch('http://localhost:9002/health');
-                const data = await response.json();
-                
-                if (data.status === 'healthy') {
-                    backendStatus.className = 'status-indicator status-connected';
-                    backendStatusText.textContent = 'Backend connected';
-                } else {
-                    throw new Error('Backend unhealthy');
-                }
-            } catch (error) {
-                backendStatus.className = 'status-indicator status-disconnected';
-                backendStatusText.textContent = 'Backend disconnected';
+        // Login form elements
+        const loginUsernameInput = document.getElementById('login-username');
+        const loginPasswordInput = document.getElementById('login-password');
+
+        // Registration form elements
+        const registerUsernameInput = document.getElementById('register-username');
+        const registerEmailInput = document.getElementById('register-email');
+        const registerPasswordInput = document.getElementById('register-password');
+        const confirmPasswordInput = document.getElementById('register-confirm-password');
+        const termsCheckbox = document.getElementById('terms-checkbox');
+        const passwordStrength = document.getElementById('password-strength');
+        const passwordMatch = document.getElementById('password-match');
+
+        /**
+         * Tab switching functionality
+         */
+        function switchTab(activeTab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            activeTab.classList.add('active');
+            
+            // Update form containers
+            document.querySelectorAll('.form-container').forEach(container => container.classList.remove('active'));
+            
+            if (activeTab.id === 'login-tab') {
+                loginFormContainer.classList.add('active');
+            } else {
+                registerFormContainer.classList.add('active');
+            }
+            
+            hideAlert();
+        }
+
+        /**
+         * Password strength validation
+         * @param {string} password - Password to validate
+         * @returns {object} Validation result with score and feedback
+         */
+        function validatePasswordStrength(password) {
+            const checks = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+            
+            const score = Object.values(checks).filter(Boolean).length;
+            
+            let strength = 'weak';
+            if (score >= 5) strength = 'very-strong';
+            else if (score >= 4) strength = 'strong';
+            else if (score >= 3) strength = 'medium';
+            
+            return { score, strength, checks };
+        }
+
+        /**
+         * Update password strength indicator
+         */
+        function updatePasswordStrength() {
+            const password = registerPasswordInput.value;
+            const validation = validatePasswordStrength(password);
+            
+            passwordStrength.className = `password-strength ${validation.strength}`;
+            
+            // Update password match indicator
+            updatePasswordMatch();
+        }
+
+        /**
+         * Update password match indicator
+         */
+        function updatePasswordMatch() {
+            const password = registerPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            if (confirmPassword.length === 0) {
+                passwordMatch.textContent = '';
+                passwordMatch.className = 'password-match';
+                return;
+            }
+            
+            if (password === confirmPassword) {
+                passwordMatch.textContent = '✓ Passwords match';
+                passwordMatch.className = 'password-match match';
+            } else {
+                passwordMatch.textContent = '✗ Passwords do not match';
+                passwordMatch.className = 'password-match no-match';
             }
         }
 
-        // Show alert message
+        /**
+         * Validate registration form
+         * @returns {object} Validation result
+         */
+        function validateRegistrationForm() {
+            const username = registerUsernameInput.value.trim();
+            const email = registerEmailInput.value.trim();
+            const password = registerPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const termsAccepted = termsCheckbox.checked;
+            
+            // Username validation
+            if (username.length < 3 || username.length > 50) {
+                return { valid: false, message: 'Username must be 3-50 characters long' };
+            }
+            
+            if (!/^[a-zA-Z0-9_]{3,50}$/.test(username)) {
+                return { valid: false, message: 'Username can only contain letters, numbers, and underscores' };
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return { valid: false, message: 'Please enter a valid email address' };
+            }
+            
+            // Password validation
+            const passwordValidation = validatePasswordStrength(password);
+            if (passwordValidation.score < 4) {
+                return { valid: false, message: 'Password must contain at least 8 characters with uppercase, lowercase, number, and special character' };
+            }
+            
+            // Password confirmation
+            if (password !== confirmPassword) {
+                return { valid: false, message: 'Passwords do not match' };
+            }
+            
+            // Terms acceptance
+            if (!termsAccepted) {
+                return { valid: false, message: 'You must accept the Terms of Service and Privacy Policy' };
+            }
+            
+            return { valid: true };
+        }
+
+        /**
+         * Check backend status
+         */
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch('http://localhost:9002/health');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'healthy') {
+                        backendStatus.className = 'status-indicator status-connected';
+                        backendStatusText.textContent = 'Backend connected';
+                        return true;
+                    }
+                }
+                throw new Error('Backend unhealthy');
+            } catch (error) {
+                backendStatus.className = 'status-indicator status-disconnected';
+                backendStatusText.textContent = 'Backend offline - please check your connection';
+                return false;
+            }
+        }
+
+        /**
+         * Show alert message
+         * @param {string} message - Alert message
+         * @param {string} type - Alert type (error, success)
+         */
         function showAlert(message, type) {
             statusAlert.textContent = message;
             statusAlert.className = `alert ${type}`;
             statusAlert.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(hideAlert, 5000);
+            }
         }
 
-        // Hide alert message
+        /**
+         * Hide alert message
+         */
         function hideAlert() {
             statusAlert.style.display = 'none';
         }
 
-        // Handle login
+        /**
+         * Handle user login
+         * @param {string} username - Username
+         * @param {string} password - Password
+         */
         async function handleLogin(username, password) {
             hideAlert();
+            
+            // Validate backend connection
+            const backendOnline = await checkBackendStatus();
+            if (!backendOnline) {
+                showAlert('Cannot connect to backend server. Please try again later.', 'error');
+                return;
+            }
+            
             loginBtn.disabled = true;
-            loginBtn.textContent = 'Logging in...';
+            loginBtn.textContent = 'Signing In...';
 
             try {
-                // Try backend authentication first
                 const formData = new FormData();
                 formData.append('username', username);
                 formData.append('password', password);
@@ -387,70 +725,140 @@
                 if (response.ok) {
                     const data = await response.json();
                     
-                    // Store the token
-                    localStorage.setItem('token', data.access_token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                    // Store authentication data
+                    localStorage.setItem('auth_token', data.access_token);
+                    localStorage.setItem('token', data.access_token); // Also save as 'token' for compatibility
+                    localStorage.setItem('user_data', JSON.stringify(data.user));
                     
                     showAlert('Login successful! Redirecting to dashboard...', 'success');
                     
                     setTimeout(() => {
-                        window.location.href = '/dashboard.html';
-                    }, 2000);
-                    
-                } else if (username === 'admin' && password === 'admin123') {
-                    // Demo mode fallback for development
-                    const demoUser = {
-                        id: 1,
-                        username: 'admin',
-                        email: 'admin@sirhiss.local',
-                        is_active: true
-                    };
-                    
-                    localStorage.setItem('token', 'demo_token_' + Date.now());
-                    localStorage.setItem('user', JSON.stringify(demoUser));
-                    localStorage.setItem('demo_mode', 'true');
-                    
-                    showAlert('Demo login successful! Redirecting to dashboard...', 'success');
-                    
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html';
-                    }, 2000);
+                        window.location.href = '/';
+                    }, 1500);
                     
                 } else {
-                    throw new Error('Invalid credentials');
+                    const errorData = await response.json().catch(() => ({ detail: 'Login failed' }));
+                    throw new Error(errorData.detail || 'Invalid username or password');
                 }
 
             } catch (error) {
                 console.error('Login error:', error);
-                showAlert('Login failed. Using demo mode - try admin/admin123.', 'error');
+                showAlert(error.message || 'Login failed. Please check your credentials.', 'error');
             } finally {
                 loginBtn.disabled = false;
-                loginBtn.textContent = 'Login to Dashboard';
+                loginBtn.textContent = 'Sign In to Dashboard';
             }
         }
 
-        // Handle demo login
-        function handleDemoLogin() {
-            usernameInput.value = 'admin';
-            passwordInput.value = 'admin123';
-            handleLogin('admin', 'admin123');
+        /**
+         * Handle user registration
+         * @param {object} userData - User registration data
+         */
+        async function handleRegistration(userData) {
+            hideAlert();
+            
+            // Validate backend connection
+            const backendOnline = await checkBackendStatus();
+            if (!backendOnline) {
+                showAlert('Cannot connect to backend server. Please try again later.', 'error');
+                return;
+            }
+            
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Creating Account...';
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    showAlert('Account created successfully! Please sign in with your new credentials.', 'success');
+                    
+                    // Switch to login tab and pre-fill username
+                    setTimeout(() => {
+                        switchTab(loginTab);
+                        loginUsernameInput.value = userData.username;
+                        loginPasswordInput.focus();
+                    }, 2000);
+                    
+                } else {
+                    const errorData = await response.json().catch(() => ({ detail: 'Registration failed' }));
+                    throw new Error(errorData.detail || 'Registration failed');
+                }
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                showAlert(error.message || 'Registration failed. Please try again.', 'error');
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Create Account';
+            }
         }
 
-        // Event listeners
+        // Event listeners for tab switching
+        loginTab.addEventListener('click', () => switchTab(loginTab));
+        registerTab.addEventListener('click', () => switchTab(registerTab));
+
+        // Login form submission
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const username = usernameInput.value;
-            const password = passwordInput.value;
+            const username = loginUsernameInput.value.trim();
+            const password = loginPasswordInput.value;
+            
+            if (!username || !password) {
+                showAlert('Please enter both username and password', 'error');
+                return;
+            }
+            
             handleLogin(username, password);
         });
 
-        demoBtn.addEventListener('click', handleDemoLogin);
+        // Registration form submission
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const validation = validateRegistrationForm();
+            if (!validation.valid) {
+                showAlert(validation.message, 'error');
+                return;
+            }
+            
+            const userData = {
+                username: registerUsernameInput.value.trim(),
+                email: registerEmailInput.value.trim(),
+                password: registerPasswordInput.value
+            };
+            
+            handleRegistration(userData);
+        });
 
-        // Initialize
-        checkBackendStatus();
-        
-        // Recheck backend status every 30 seconds
-        setInterval(checkBackendStatus, 30000);
+        // Real-time password validation
+        registerPasswordInput.addEventListener('input', updatePasswordStrength);
+        confirmPasswordInput.addEventListener('input', updatePasswordMatch);
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user is already logged in
+            const authToken = localStorage.getItem('auth_token') || localStorage.getItem('token');
+            if (authToken) {
+                // Redirect to React app if already authenticated
+                window.location.href = '/';
+                return;
+            }
+            
+            // Check backend status
+            checkBackendStatus();
+            
+            // Recheck backend status every 30 seconds
+            setInterval(checkBackendStatus, 30000);
+        });
     </script>
 </body>
 </html>

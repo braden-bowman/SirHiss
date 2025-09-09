@@ -41,6 +41,10 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: development
+      cache_from:
+        - sirhiss-backend:latest
+        - python:3.11-slim
     container_name: sirhiss-backend
     env_file:
       - .env.dev  # Development defaults
@@ -71,6 +75,10 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: development
+      cache_from:
+        - sirhiss-backend:latest
+        - python:3.11-slim
     container_name: sirhiss-celery
     env_file:
       - .env.dev  # Development defaults
@@ -97,7 +105,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: dev
+      cache_from:
+        - sirhiss-frontend:latest
+        - node:18-alpine
     container_name: sirhiss-frontend
+    env_file:
+      - .env.dev  # Development defaults
+      - .env      # Production overrides (if exists)
     environment:
       REACT_APP_API_URL: http://localhost:9002
       REACT_APP_WS_URL: ws://localhost:9002

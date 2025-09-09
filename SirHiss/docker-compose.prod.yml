@@ -1,0 +1,111 @@
+version: '3.8'
+
+# Production overrides for SirHiss
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  postgres:
+    restart: unless-stopped
+    # Remove development port exposure for security
+    ports: []
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      # Use stronger settings for production
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+
+  redis:
+    restart: unless-stopped
+    # Remove development port exposure for security  
+    ports: []
+    volumes:
+      - redis_data_prod:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+
+  backend:
+    build:
+      target: production  # Use production build stage
+      cache_from:
+        - sirhiss-backend:latest
+        - sirhiss-backend:production
+        - python:3.11-slim
+    restart: unless-stopped
+    # Remove development volume mount
+    volumes:
+      - bot_storage_prod:/app/bot_storage
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "false"
+    # Use production command with multiple workers
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  celery:
+    build:
+      target: production  # Use production build stage
+      cache_from:
+        - sirhiss-backend:latest
+        - sirhiss-backend:production
+        - python:3.11-slim
+    restart: unless-stopped
+    # Remove development volume mount
+    volumes:
+      - bot_storage_prod:/app/bot_storage
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "false"
+    # Use production command with optimized worker settings
+    command: celery -A app.core.celery_app worker --loglevel=warning --concurrency=2
+
+  frontend:
+    build:
+      target: production  # Use nginx production build
+      cache_from:
+        - sirhiss-frontend:latest
+        - sirhiss-frontend:production
+        - node:18-alpine
+        - nginx:alpine
+    restart: unless-stopped
+    # Remove development volume mounts
+    volumes: []
+    environment:
+      # Production environment variables
+      NODE_ENV: production
+    # Use nginx default port
+    ports:
+      - "9001:80"
+
+  # Add nginx reverse proxy for production (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: sirhiss-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - sirhiss-network
+
+volumes:
+  postgres_data_prod:
+  redis_data_prod:  
+  bot_storage_prod:
+
+# Add monitoring network for production
+networks:
+  sirhiss-network:
+    driver: bridge
+  monitoring:
+    external: true
+    driver: bridge

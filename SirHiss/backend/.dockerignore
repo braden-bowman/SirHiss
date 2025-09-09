@@ -1,0 +1,106 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Development files
+.git/
+.gitignore
+README.md
+Dockerfile*
+docker-compose*
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+log/
+
+# Testing
+.coverage
+.pytest_cache/
+.tox/
+coverage.xml
+*.cover
+.coverage.*
+.cache
+nosetests.xml
+coverage/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files (keep requirements.txt)
+.env.local
+.env.development.local
+.env.test.local
+
+# Cache directories
+.cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Temporary files
+tmp/
+temp/
+
+# Test database
+test.db
